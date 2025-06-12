@@ -6,20 +6,13 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "error.h"
+
 #define MAX_FILES 100
 #define MAX_FILENAME 32
 #define BLOCK_SIZE 512
 #define TOTAL_STORAGE 1048576  // 1024 * 1024, 1 MB
 #define TOTAL_BLOCKS (TOTAL_STORAGE / BLOCK_SIZE)
-
-typedef enum {
-  OK = 0,
-  ERR_FILE_ALREADY_EXISTS,
-  ERR_MAX_FILES_REACHED,
-  ERR_NOT_ENOUGH_SPACE,
-  ERR_FILE_NOT_FOUND,
-  ERR_NO_MEMORY,
-} err_t;
 
 typedef struct {
   bool in_use;
