@@ -18,6 +18,7 @@ typedef enum {
   ERR_MAX_FILES_REACHED,
   ERR_NOT_ENOUGH_SPACE,
   ERR_FILE_NOT_FOUND,
+  ERR_NO_MEMORY,
 } err_t;
 
 typedef struct {
@@ -25,19 +26,21 @@ typedef struct {
   char name[MAX_FILENAME];
   size_t size;
   size_t block_count;
-  size_t used_blocks[TOTAL_BLOCKS];
+  size_t* used_blocks;
 } file_t;
 
 typedef struct {
-  file_t files[MAX_FILES];
-  char data_blocks[TOTAL_BLOCKS][BLOCK_SIZE];
-  bool block_map[TOTAL_BLOCKS];
+  file_t* files;
+  char** data_blocks;
+  bool* block_map;
 } file_system_t;
 
-void fs_init(file_system_t* fs);
+err_t fs_init(file_system_t* fs_ptr);
 
 err_t fs_create(file_system_t* fs, const char* name, size_t size);
 
 err_t fs_delete(file_system_t* fs, const char* name);
+
+void fs_free(file_system_t* fs);
 
 #endif  // FS_H

@@ -5,31 +5,47 @@
 #include "fs.h"
 
 int main() {
+  err_t error = OK;
+
   file_system_t fs;
 
-  fs_init(&fs);
-
-  err_t result = OK;
-
-  result = fs_create(&fs, "file1.txt", 128);
-  if (result != OK) {
-    return result;
+  if (!error) {
+    error = fs_init(&fs);
   }
 
-  result = fs_create(&fs, "file2.txt", 128);
-  if (result != OK) {
-    return result;
+  if (!error) {
+    error = fs_create(&fs, "file1.txt", 1024);
+
+    if (!error) {
+      printf("File 'file1.txt' created successfully.\n");
+    }
   }
 
-  result = fs_delete(&fs, "file1.txt");
-  if (result != OK) {
-    return result;
+  if (!error) {
+    error = fs_create(&fs, "file2.txt", 2048);
+
+    if (!error) {
+      printf("File 'file2.txt' created successfully.\n");
+    }
   }
 
-  result = fs_delete(&fs, "file3.txt");
-  if (result != OK) {
-    return result;
+  if (!error) {
+    error = fs_delete(&fs, "file1.txt");
+
+    if (!error) {
+      printf("File 'file1.txt' deleted successfully.\n");
+    }
   }
 
-  return result;
+  if (!error) {
+    error = fs_delete(&fs, "file3.txt");
+
+    if (!error) {
+      printf("File 'file3.txt' deleted successfully.\n");
+    }
+  }
+
+  fs_free(&fs);
+
+  return error;
 }

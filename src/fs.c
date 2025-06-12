@@ -3,6 +3,7 @@
 #include "fs.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define NOT_FOUND_INDEX ((size_t) -1)
@@ -17,14 +18,41 @@ size_t find_file(const file_system_t* fs, const char* name) {
   return NOT_FOUND_INDEX;
 }
 
-void fs_init(file_system_t* fs) {
+err_t fs_init(file_system_t* fs) {
+  fs->files = malloc(MAX_FILES * sizeof(file_t));
+  if (fs->files == NULL) {
+    return ERR_NO_MEMORY;
+  }
+
+  fs->data_blocks = malloc(TOTAL_BLOCKS * sizeof(char*));
+  if (fs->data_blocks == NULL) {
+    free(fs->files);
+    fs->files = NULL;
+
+    return ERR_NO_MEMORY;
+  }
+
+  fs->block_map = malloc(TOTAL_BLOCKS * sizeof(bool));
+  if (fs->block_map == NULL) {
+    free(fs->files);
+    fs->files = NULL;
+
+    free(fs->data_blocks);
+    fs->data_blocks = NULL;
+
+    return ERR_NO_MEMORY;
+  }
+
   for (size_t i = 0; i < MAX_FILES; i++) {
     fs->files[i].in_use = false;
+    fs->files[i].used_blocks = NULL;
   }
 
   for (size_t i = 0; i < TOTAL_BLOCKS; i++) {
     fs->block_map[i] = false;
   }
+
+  return OK;
 }
 
 err_t fs_create(file_system_t* fs, const char* name, size_t size) {
@@ -49,6 +77,12 @@ err_t fs_create(file_system_t* fs, const char* name, size_t size) {
   size_t blocks_needed = (size + BLOCK_SIZE - 1) / BLOCK_SIZE;
 
   file_t* file = &fs->files[file_index];
+
+  file->used_blocks = (size_t*) malloc(blocks_needed * sizeof(size_t));
+  if (file->used_blocks == NULL) {
+    return ERR_NO_MEMORY;
+  }
+
   file->block_count = 0;
 
   size_t blocks_used = 0;
@@ -64,6 +98,9 @@ err_t fs_create(file_system_t* fs, const char* name, size_t size) {
     for (size_t i = 0; i < blocks_used; i++) {
       fs->block_map[file->used_blocks[i]] = false;
     }
+
+    free(file->used_blocks);
+    file->used_blocks = NULL;
 
     fprintf(stderr, "Error: Not enough space to create file '%s'.\n", name);
     return ERR_NOT_ENOUGH_SPACE;
@@ -94,5 +131,35 @@ err_t fs_delete(file_system_t* fs, const char* name) {
 
   file->in_use = false;
 
+  free(file->used_blocks);
+  file->used_blocks = NULL;
+
   return OK;
+}
+
+void fs_free(file_system_t* fs) {
+  if (fs == NULL) {
+    return;
+  }
+
+  for (size_t i = 0; i < MAX_FILES; i++) {
+    if (fs->files[i].in_use && fs->files[i].used_blocks != NULL) {
+      free(fs->files[i].used_blocks);
+    }
+  }
+
+  if (fs->files != NULL) {
+    free(fs->files);
+    fs->files = NULL;
+  }
+
+  if (fs->data_blocks != NULL) {
+    free(fs->data_blocks);
+    fs->data_blocks = NULL;
+  }
+
+  if (fs->block_map != NULL) {
+    free(fs->block_map);
+    fs->block_map = NULL;
+  }
 }
