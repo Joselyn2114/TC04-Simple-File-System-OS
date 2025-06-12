@@ -16,7 +16,7 @@ typedef enum {
   OK = 0,
   ERR_FILE_ALREADY_EXISTS,
   ERR_MAX_FILES_REACHED,
-  ERR_NOT_ENOUGHT_SPACE,
+  ERR_NOT_ENOUGH_SPACE,
   ERR_FILE_NOT_FOUND,
 } err_t;
 
@@ -36,8 +36,8 @@ typedef struct {
 
 void fs_init(file_system_t* fs);
 
-err_t fs_create(const char* name, size_t size);
+err_t fs_create(file_system_t* fs, const char* name, size_t size);
 
-err_t fs_delete(const char* name);
+err_t fs_delete(file_system_t* fs, const char* name);
 
 #endif  // FS_H
