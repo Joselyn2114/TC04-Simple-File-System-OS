@@ -24,7 +24,7 @@ err_t fs_init(file_system_t* fs) {
     return ERR_NO_MEMORY;
   }
 
-  fs->data_blocks = malloc(TOTAL_BLOCKS * sizeof(char*));
+  fs->data_blocks = malloc(TOTAL_BLOCKS);
   if (fs->data_blocks == NULL) {
     free(fs->files);
     fs->files = NULL;

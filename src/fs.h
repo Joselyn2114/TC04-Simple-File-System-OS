@@ -31,7 +31,7 @@ typedef struct {
 
 typedef struct {
   file_t* files;
-  char** data_blocks;
+  char* data_blocks;
   bool* block_map;
 } file_system_t;
 
