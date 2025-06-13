@@ -112,6 +112,12 @@ err_t fs_create(file_system_t* fs, const char* name, size_t size) {
   file->size = size;
   file->block_count = blocks_needed;
 
+  printf(
+    "Info: File '%s' created with %zu blocks.\n",
+    file->name,
+    file->block_count
+  );
+
   return OK;
 }
 
@@ -133,6 +139,8 @@ err_t fs_delete(file_system_t* fs, const char* name) {
 
   free(file->used_blocks);
   file->used_blocks = NULL;
+
+  printf("Info: File '%s' deleted.\n", file->name);
 
   return OK;
 }
