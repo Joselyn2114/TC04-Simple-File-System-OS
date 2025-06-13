@@ -27,10 +27,6 @@ int main(int argc, char** argv) {
     error = parser_start(&fs, file);
   }
 
-  if (!error) {
-    error = parser_execute(&fs, NULL);
-  }
-
   fclose(file);
 
   fs_free(&fs);

@@ -16,12 +16,14 @@ err_t parser_start(file_system_t* fs, FILE* file) {
   char buffer[MAX_BUFFER_LENGTH];
 
   while (fgets(buffer, sizeof(buffer), file) != NULL) {
-    buffer[strcspn(buffer, "\n")] = 0;
+    if (buffer[0] == '\0' && buffer[0] == '\n') {
+      buffer[strcspn(buffer, "\n")] = 0;
 
-    if (strlen(buffer) > 0) {
-      err_t error = parser_execute(fs, buffer);
-      if (error != OK) {
-        return error;
+      if (strlen(buffer) > 0) {
+        err_t error = parser_execute(fs, buffer);
+        if (error != OK) {
+          return error;
+        }
       }
     }
   }
@@ -78,7 +80,7 @@ err_t parser_execute(file_system_t* fs, char* buffer) {
 err_t parser_create(file_system_t* fs, char* buffer) {
   char filename[MAX_FILENAME_LENGTH];
 
-  char* token = strtok(buffer, " ");
+  char* token = strtok(NULL, " ");
   if (token == NULL) {
     fprintf(stderr, "CREATE: No filename.\n");
     return ERR_CMD_NO_ARGUMENT;
@@ -101,7 +103,7 @@ err_t parser_create(file_system_t* fs, char* buffer) {
 err_t parser_delete(file_system_t* fs, char* buffer) {
   char filename[MAX_FILENAME_LENGTH];
 
-  char* token = strtok(buffer, " ");
+  char* token = strtok(NULL, " ");
   if (token == NULL) {
     fprintf(stderr, "DELETE: No filename.\n");
     return ERR_CMD_NO_ARGUMENT;
