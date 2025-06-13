@@ -14,7 +14,7 @@ SRC_FILES = $(shell find $(SRC_DIR) -name '*.c')
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 TARGET = $(BIN_DIR)/$(PROJECT_ID)
 
-.PHONY: asan clean run run_asan
+.PHONY: asan debug clean run run-asan
 
 $(TARGET): $(OBJ_FILES)
 	@mkdir -p $(BIN_DIR)
@@ -26,6 +26,9 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 
 asan: CFLAGS += -fsanitize=address
 asan: $(TARGET)
+
+debug: CFLAGS += -g -O0
+debug: $(TARGET)
 
 clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR)
