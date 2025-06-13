@@ -62,22 +62,22 @@ err_t parser_execute(file_system_t* fs, char* buffer) {
 
   switch (cmd_type) {
     case CMD_CREATE:
-      return parser_create(fs, buffer_copy);
+      return parser_create(fs);
     case CMD_DELETE:
-      return parser_delete(fs, buffer_copy);
+      return parser_delete(fs);
     case CMD_WRITE:
-      return parser_write(fs, buffer_copy);
+      return parser_write(fs);
     case CMD_READ:
-      return parser_read(fs, buffer_copy);
+      return parser_read(fs);
     case CMD_LIST:
-      return parser_list(fs, buffer_copy);
+      return parser_list(fs);
     default:
       fprintf(stderr, "Unknown command: %s\n", command);
       return ERR_CMD_UNKNOWN;
   }
 }
 
-err_t parser_create(file_system_t* fs, char* buffer) {
+err_t parser_create(file_system_t* fs) {
   char filename[MAX_FILENAME_LENGTH];
 
   char* token = strtok(NULL, " ");
@@ -100,7 +100,7 @@ err_t parser_create(file_system_t* fs, char* buffer) {
   return OK;
 }
 
-err_t parser_delete(file_system_t* fs, char* buffer) {
+err_t parser_delete(file_system_t* fs) {
   char filename[MAX_FILENAME_LENGTH];
 
   char* token = strtok(NULL, " ");
@@ -116,26 +116,23 @@ err_t parser_delete(file_system_t* fs, char* buffer) {
   return OK;
 }
 
-err_t parser_write(file_system_t* fs, char* buffer) {
+err_t parser_write(file_system_t* fs) {
   // fs_write();
   (void) fs;
-  (void) buffer;
   fprintf(stderr, "WRITE: Not implemented.\n");
   return ERR_CMD_UNKNOWN;
 }
 
-err_t parser_read(file_system_t* fs, char* buffer) {
+err_t parser_read(file_system_t* fs) {
   // fs_read();
   (void) fs;
-  (void) buffer;
   fprintf(stderr, "READ: Not implemented.\n");
   return ERR_CMD_UNKNOWN;
 }
 
-err_t parser_list(file_system_t* fs, char* buffer) {
+err_t parser_list(file_system_t* fs) {
   // fs_list();
   (void) fs;
-  (void) buffer;
   fprintf(stderr, "LIST: Not implemented.\n");
   return ERR_CMD_UNKNOWN;
 }
