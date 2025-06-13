@@ -28,7 +28,7 @@ typedef struct {
   bool* block_map;
 } file_system_t;
 
-err_t fs_init(file_system_t* fs_ptr);
+err_t fs_init(file_system_t* fs);
 
 err_t fs_create(file_system_t* fs, const char* name, size_t size);
 

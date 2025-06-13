@@ -2,48 +2,36 @@
 
 #include <stdio.h>
 
-#include "fs.h"
+#include "parser.h"
 
-int main() {
+int main(int argc, char** argv) {
   err_t error = OK;
+
+  if (argc < 2) {
+    fprintf(stderr, "Usage: %s <file>.\n", argv[0]);
+    return ERR_CMD_NO_ARGUMENT;
+  }
+
+  char* filename = argv[1];
+  FILE* file = fopen(filename, "r");
+  if (file == NULL) {
+    fprintf(stderr, "Error: Can't open file '%s'.\n", filename);
+    return ERR_FILE_NOT_FOUND;
+  }
 
   file_system_t fs;
 
+  error = fs_init(&fs);
+
   if (!error) {
-    error = fs_init(&fs);
+    error = parser_start(&fs, file);
   }
 
   if (!error) {
-    error = fs_create(&fs, "file1.txt", 1024);
-
-    if (!error) {
-      printf("File 'file1.txt' created successfully.\n");
-    }
+    error = parser_execute(&fs, NULL);
   }
 
-  if (!error) {
-    error = fs_create(&fs, "file2.txt", 2048);
-
-    if (!error) {
-      printf("File 'file2.txt' created successfully.\n");
-    }
-  }
-
-  if (!error) {
-    error = fs_delete(&fs, "file1.txt");
-
-    if (!error) {
-      printf("File 'file1.txt' deleted successfully.\n");
-    }
-  }
-
-  if (!error) {
-    error = fs_delete(&fs, "file3.txt");
-
-    if (!error) {
-      printf("File 'file3.txt' deleted successfully.\n");
-    }
-  }
+  fclose(file);
 
   fs_free(&fs);
 

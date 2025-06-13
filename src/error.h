@@ -10,6 +10,9 @@ typedef enum {
   ERR_NOT_ENOUGH_SPACE,
   ERR_FILE_NOT_FOUND,
   ERR_NO_MEMORY,
+  ERR_CMD_EMPTY,
+  ERR_CMD_UNKNOWN,
+  ERR_CMD_NO_ARGUMENT,
 } err_t;
 
 #endif  // ERROR_H

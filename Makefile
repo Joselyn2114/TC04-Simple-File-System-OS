@@ -1,7 +1,7 @@
 #
 
 PROJECT_ID = fs
-ARGS = 
+ARGS = tests/1.txt
 
 CC = gcc
 CFLAGS = -I$(SRC_DIR) -Werror -Wextra
