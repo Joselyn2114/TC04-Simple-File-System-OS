@@ -14,7 +14,7 @@ SRC_FILES = $(shell find $(SRC_DIR) -name '*.c')
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 TARGET = $(BIN_DIR)/$(PROJECT_ID)
 
-.PHONY: asan debug clean run run-asan
+.PHONY: asan debug release clean run run-asan
 
 $(TARGET): $(OBJ_FILES)
 	@mkdir -p $(BIN_DIR)
@@ -29,6 +29,9 @@ asan: $(TARGET)
 
 debug: CFLAGS += -g -O0
 debug: $(TARGET)
+
+release: CFLAGS += -O2
+release: $(TARGET)
 
 clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR)
