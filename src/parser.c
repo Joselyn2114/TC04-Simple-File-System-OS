@@ -16,7 +16,7 @@ err_t parser_start(file_system_t* fs, FILE* file) {
   char buffer[MAX_BUFFER_LENGTH];
 
   while (fgets(buffer, sizeof(buffer), file) != NULL) {
-    if (buffer[0] == '\0' && buffer[0] == '\n') {
+    if (buffer[0] != '\0' && buffer[0] != '\n') {
       buffer[strcspn(buffer, "\n")] = 0;
 
       if (strlen(buffer) > 0) {
