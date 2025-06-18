@@ -1,0 +1,12 @@
+﻿
+CREATE foo.txt 20
+LIST
+WRITE foo.txt 0 ¡Hola, mundo!
+READ foo.txt 0 13
+WRITE foo.txt 5 XXXXX
+READ foo.txt 0 20
+DELETE foo.txt
+LIST
+READ bar.txt 0 10         
+CREATE big.bin 1049000   
+WRITE foo.txt 100 123     

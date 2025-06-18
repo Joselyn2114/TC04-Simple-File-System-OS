@@ -36,4 +36,23 @@ err_t fs_delete(file_system_t* fs, const char* name);
 
 void fs_free(file_system_t* fs);
 
+
+// Escribe 'data_len' bytes de 'data' en el archivo 'name' a partir de 'offset'
+// - Sólo sobrescribe bytes dentro del tamaño declarado
+err_t fs_write(file_system_t* fs,
+               const char* filename,
+               size_t offset,
+               const char* data,
+               size_t data_len);
+
+// lee “size” bytes de <filename> desde offset e imprime el resultado
+err_t fs_read(file_system_t* fs,
+              const char* filename,
+              size_t offset,
+              size_t size);
+
+// lista todos los archivos (nombre y tamaño)
+err_t fs_list(file_system_t* fs);
+
+
 #endif  // FS_H

@@ -1,7 +1,7 @@
 //
 
 #include "fs.h"
-
+#include "error.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,8 +28,8 @@ err_t fs_init(file_system_t* fs) {
     return ERR_NO_MEMORY;
   }
 
-  // Reserva espacio para los datos de archivos (bloques de datos)
-  fs->data_blocks = malloc(TOTAL_BLOCKS);
+  // Reserva espacio para los datos de archivos (bloques de datos) 1MB
+  fs->data_blocks = malloc(TOTAL_STORAGE);
   if (fs->data_blocks == NULL) {
     free(fs->files);
     fs->files = NULL;
@@ -199,4 +199,115 @@ void fs_free(file_system_t* fs) {
     free(fs->block_map);
     fs->block_map = NULL;
   }
+}
+
+// -----------------------------------------------------------------------------
+// Escribe data_len bytes de 'data' en el archivo 'name' a partir de 'offset'.
+// Devuelve OK en caso de éxito o el código de error correspondiente.
+// -----------------------------------------------------------------------------
+err_t fs_write(file_system_t* fs,
+               const char* name,
+               size_t offset,
+               const char* data,
+               size_t data_len) {
+  // Trazas de depuración para verificar parámetros
+  printf(
+    "[TRACE] entro a fs_write con name=\"%s\", offset=%zu, data_len=%zu, data=\"%.*s\"\n",
+    name,           // %s
+    offset,         // %zu
+    data_len,       // %zu
+    (int)data_len,  // int para precisión de %.*s
+    data            // %s
+  );
+
+  // 1) Busca el índice del archivo en fs->files[]
+  size_t idx = find_file(fs, name);
+  if (idx == NOT_FOUND_INDEX) {
+    fprintf(stderr, "Error: File '%s' not found.\n", name);
+    return ERR_FILE_NOT_FOUND;
+  }
+
+  file_t* f = &fs->files[idx];
+
+  // 2) Verifica que la escritura no exceda el tamaño declarado
+  if (offset + data_len > f->size) {
+    fprintf(stderr, "Error: write exceeds file size.\n");
+    return ERR_NOT_ENOUGH_SPACE;
+  }
+
+  // 3) Escribe byte a byte en el bloque correspondiente
+  for (size_t i = 0; i < data_len; i++) {
+    size_t abs_pos   = offset + i;            // posición absoluta
+    size_t block_idx = abs_pos / BLOCK_SIZE;  // bloque lógico
+    size_t in_block  = abs_pos % BLOCK_SIZE;  // desplazamiento en el bloque
+    size_t real_blk  = f->used_blocks[block_idx]; // bloque físico
+    fs->data_blocks[ real_blk * BLOCK_SIZE + in_block ] = data[i];
+  }
+
+  // 4) Confirma la escritura
+  printf("Info: Written %zu bytes to '%s'.\n", data_len, name);
+  return OK;
+}
+
+
+
+
+
+
+
+
+
+
+
+// Lee 'size' bytes desde offset e imprime por stdout
+err_t fs_read(file_system_t* fs,
+              const char* name,
+              size_t offset,
+              size_t size) {
+  size_t idx = find_file(fs, name);
+  if (idx == NOT_FOUND_INDEX) {
+    fprintf(stderr, "Error: File '%s' not found.\n", name);
+    return ERR_FILE_NOT_FOUND;
+  }
+  file_t* f = &fs->files[idx];
+  // Verifica límite de lectura
+  if (offset + size > f->size) {
+    fprintf(stderr, "Error: read exceeds file size.\n");
+    return ERR_NOT_ENOUGH_SPACE;
+  }
+  // Buffer temporal (más 1 byte para '\0')
+  char* buf = malloc(size + 1);
+  if (!buf) return ERR_NO_MEMORY;
+
+  // Extrae byte a byte igual que en write
+  for (size_t i = 0; i < size; i++) {
+    size_t abs_pos   = offset + i;
+    size_t blk_index = abs_pos / BLOCK_SIZE;
+    size_t in_block  = abs_pos % BLOCK_SIZE;
+    size_t real_blk  = f->used_blocks[blk_index];
+    buf[i] = fs->data_blocks[real_blk * BLOCK_SIZE + in_block];
+  }
+  buf[size] = '\0';
+
+  // Imprime el contenido leído
+  printf("Output: %s\n", buf);
+  free(buf);
+  return OK;
+}
+
+// Lista todos los archivos existentes con su tamaño
+err_t fs_list(file_system_t* fs) {
+  bool any = false;
+  for (size_t i = 0; i < MAX_FILES; i++) {
+    if (fs->files[i].in_use) {
+      printf("%s - %zu bytes\n",
+             fs->files[i].name,
+             fs->files[i].size);
+      any = true;
+    }
+  }
+  if (!any) {
+    printf("(no hay archivos)\n");
+  }
+  return OK;
 }

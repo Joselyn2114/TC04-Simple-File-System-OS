@@ -1,2 +1,0 @@
-CREATE archivo1.txt 1000
-DELETE archivo1.txt
