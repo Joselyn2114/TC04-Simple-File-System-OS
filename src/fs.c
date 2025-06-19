@@ -1,3 +1,4 @@
+// src/fs.c
 //
 
 #include "fs.h"
@@ -132,11 +133,10 @@ err_t fs_create(file_system_t* fs, const char* name, size_t size) {
   file->size = size;
   file->block_count = blocks_needed;
 
-  printf(
-    "Info: File '%s' created with %zu blocks.\n",
-    file->name,
-    file->block_count
-  );
+  printf("Info: File '%s' created with %zu block%s.\n",
+       file->name,
+       file->block_count,
+       file->block_count == 1 ? "" : "s");
 
   return OK;
 }
@@ -248,16 +248,6 @@ err_t fs_write(file_system_t* fs,
   printf("Info: Written %zu bytes to '%s'.\n", data_len, name);
   return OK;
 }
-
-
-
-
-
-
-
-
-
-
 
 // Lee 'size' bytes desde offset e imprime por stdout
 err_t fs_read(file_system_t* fs,

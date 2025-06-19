@@ -1,10 +1,14 @@
+// src/main.c
 //
 
 #include <stdio.h>
-
+#include <locale.h>      // ← para setlocale
 #include "parser.h"
 
 int main(int argc, char** argv) {
+  // Inicializa localidad para UTF-8 y que 'ó', 'í', etc. se impriman bien
+  setlocale(LC_ALL, "");
+
   err_t error = OK;
 
   if (argc < 2) {

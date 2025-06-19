@@ -1,3 +1,4 @@
+// src/error.h
 //
 
 #ifndef ERROR_H

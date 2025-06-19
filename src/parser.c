@@ -1,3 +1,4 @@
+// src/parser.c
 //
 
 #include "parser.h"
@@ -17,7 +18,6 @@ static void strip_bom(char* buffer) {
   }
 }
 
-
 #define MAX_BUFFER_LENGTH 256
 #define MAX_FILENAME_LENGTH 32
 #define MAX_DATA_LENGTH 64
@@ -29,7 +29,7 @@ err_t parser_start(file_system_t* fs, FILE* file) {
     // 1) Limpia BOM si existe
     strip_bom(buffer);
 
-    // 2) Corta comentarios inline (‘#’) si los hubiera
+    // 2) Corta comentarios inline ('#') si los hubiera
     char* comment = strchr(buffer, '#');
     if (comment) *comment = '\0';
 
@@ -43,7 +43,7 @@ err_t parser_start(file_system_t* fs, FILE* file) {
     err_t err = parser_execute(fs, buffer);
     if (err != OK) {
       // ¡Sin return! Solo reportamos y continuamos
-      fprintf(stderr, "Warning: línea “%s” devolvió código %d, sigo...\n",
+      fprintf(stderr, "Warning: linea \"%s\" devolvio codigo %d, sigo...\n",
               buffer, err);
       continue;
     }
@@ -51,8 +51,6 @@ err_t parser_start(file_system_t* fs, FILE* file) {
 
   return OK;
 }
-
-
 
 err_t parser_execute(file_system_t* fs, char* buffer) {
   char buffer_copy[MAX_BUFFER_LENGTH];
@@ -91,7 +89,6 @@ err_t parser_execute(file_system_t* fs, char* buffer) {
   return ERR_CMD_UNKNOWN;
 }
 
-
 err_t parser_create(file_system_t* fs) {
   char filename[MAX_FILENAME_LENGTH];
 
@@ -114,9 +111,7 @@ err_t parser_create(file_system_t* fs) {
   size_t size = strtoul(token, NULL, 10);
 
   // Llama a la función de creación de archivo del sistema
-  fs_create(fs, filename, size);
-
-  return OK;
+  return fs_create(fs, filename, size);
 }
 
 err_t parser_delete(file_system_t* fs) {
@@ -132,9 +127,7 @@ err_t parser_delete(file_system_t* fs) {
   filename[MAX_FILENAME_LENGTH - 1] = '\0';
 
   // Elimina el archivo en el sistema de archivos
-  fs_delete(fs, filename);
-
-  return OK;
+  return fs_delete(fs, filename);
 }
 
 // WRITE <name> <offset> <data...>
@@ -203,7 +196,6 @@ err_t parser_read(file_system_t* fs, char* buffer) {
   // 3) Llama al FS
   return fs_read(fs, name, offset, size);
 }
-
 
 // LIST
 err_t parser_list(file_system_t* fs) {

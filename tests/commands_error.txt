@@ -1,0 +1,10 @@
+# 1. Duplicar CREATE
+CREATE foo 512
+CREATE foo 100
+
+# 2. Escritura fuera de rango
+WRITE foo 510 ABCDEF
+
+# 3. READ y DELETE de no existente
+READ bar 0 10
+DELETE bar
