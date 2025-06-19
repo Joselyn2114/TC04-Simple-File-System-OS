@@ -1,0 +1,1 @@
+# (vacío a propósito; sirve para comprobar el error de uso cuando no se pasa ningún parámetro)

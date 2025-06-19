@@ -1,0 +1,2 @@
+CREATE foo 512
+WRITE foo 510 ABCDEF

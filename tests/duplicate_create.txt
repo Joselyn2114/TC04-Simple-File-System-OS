@@ -1,0 +1,2 @@
+CREATE foo 512
+CREATE foo 100
